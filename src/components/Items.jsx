@@ -21,7 +21,7 @@ const Items = ({ id, title, body, createdAt, archived, action }) => {
       ? handleClickConfirm(
           item,
           action,
-          "archive",
+          "Archive",
           "Are you sure?",
           "Do you want to 'archive' this note?",
           "info",
@@ -30,7 +30,7 @@ const Items = ({ id, title, body, createdAt, archived, action }) => {
       : handleClickConfirm(
           item,
           action,
-          "archive",
+          "Unarchive",
           "Are you sure?",
           "Do you want to 'unarchive' this note?",
           "info",
