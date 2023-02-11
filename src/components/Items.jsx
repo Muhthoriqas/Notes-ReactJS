@@ -1,61 +1,56 @@
-import React from "react";
-import Action from "./Action";
-import ShowItems from "./ShowItems";
-import { handleClickConfirm } from "./Alert";
+import Swal from "sweetalert2";
 
-const Items = ({ id, title, body, createdAt, archived, action }) => {
-  const onDeleteNote = (item) => {
-    handleClickConfirm(
-      item,
-      action,
-      "delete",
-      "Are you sure?",
-      "You won't be able to revert this!",
-      "warning",
-      "Yes, delete it!"
-    );
-  };
-
-  const onArchiveNote = (item) => {
-    !archived
-      ? handleClickConfirm(
-          item,
-          action,
-          "Archive",
-          "Are you sure?",
-          "Do you want to 'archive' this note?",
-          "info",
-          "Yes, archive it!"
-        )
-      : handleClickConfirm(
-          item,
-          action,
-          "Unarchive",
-          "Are you sure?",
-          "Do you want to 'unarchive' this note?",
-          "info",
-          "Yes, unarchive it!"
-        );
-  };
-
-  return (
-    <div className="note-item">
-      <ShowItems
-        title={title}
-        body={body}
-        createdAt={createdAt}
-        archived={archived}
-        action={action}
-      />
-
-      <Action
-        onDeleteNote={onDeleteNote}
-        onArchiveNote={onArchiveNote}
-        id={id}
-        archived={archived}
-      />
-    </div>
-  );
+const handleClick = ({ title, text, icon }) => {
+  Swal.fire({
+    title,
+    text,
+    icon,
+    showConfirmButton: false,
+    timer: 3000,
+  });
 };
 
-export default Items;
+const handleClickConfirm = (
+  item,
+  action,
+  type,
+  title,
+  text,
+  icon,
+  confirmButtonText
+) => {
+  Swal.fire({
+    title: title,
+    text: text,
+    icon: icon,
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: confirmButtonText,
+  }).then((result) => {
+    if (type === "delete") {
+      if (result.isConfirmed) {
+        action((notes) => notes.filter((note) => note.id !== item));
+        Swal.fire("Deleted!", "Your file has been deleted.", "success");
+      }
+    } else if (type === "archive" || type === "unarchive") {
+      if (result.isConfirmed) {
+        action((notes) =>
+          notes.map((note) => {
+            if (note.id === item) {
+              return { ...note, archived: !note.archived };
+            }
+            return note;
+          })
+        );
+        if (type === "archive") {
+          Swal.fire("Archived!", "The note has been archived.", "success");
+        } else {
+          Swal.fire("Unrchived!", "The note has been unrchived.", "success");
+        }
+      }
+    }
+  });
+};
+
+export { handleClick, handleClickConfirm };
