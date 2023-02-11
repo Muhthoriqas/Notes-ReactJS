@@ -33,7 +33,7 @@ const handleClickConfirm = (
         action((notes) => notes.filter((note) => note.id !== item));
         Swal.fire("Deleted!", "Your file has been deleted.", "success");
       }
-    } else if (type === "archive") {
+    } else if (type === "archive" || type === "unarchive") {
       if (result.isConfirmed) {
         action((notes) =>
           notes.map((note) => {
@@ -43,7 +43,11 @@ const handleClickConfirm = (
             return note;
           })
         );
-        Swal.fire("Archived!", "The note has been archived.", "success");
+        if (type === "archive") {
+          Swal.fire("Archived!", "The note has been archived.", "success");
+        } else {
+          Swal.fire("Unrchived!", "The note has been unrchived.", "success");
+        }
       }
     }
   });
